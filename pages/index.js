@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
-import { useSession } from 'next-auth/react';
+
+
+import { useSession, signIn, signOut } from "next-auth/react";
 
 const styles = {
   content: {
@@ -12,8 +14,9 @@ const styles = {
 }
 
 const IndexHomePage = () => {
+  const { data: session } = useSession();
   const [user, setUser] = useState(null);
-  const { session } = useSession();
+  
 
   useEffect(() => {
     if (session) {
@@ -31,15 +34,18 @@ const IndexHomePage = () => {
   return (
     <div>
      <h1>My Next.js App</h1>
-      {user ? (
-        <div>
-          <p>Hello, {user.name}!</p>
-          <Button onClick={handleLogout}>Logout</Button>
-        </div>
+   
+
+    <div>
+      {!session ? (
+        <button onClick={() => signIn("google")}>Sign in with Google</button>
       ) : (
-        <Button onClick={handleLogin}>Login with Google</Button>
+        <div>
+          <p>Welcome, {session.user.name}!</p>
+          <button onClick={() => signOut()}>Sign out</button>
+        </div>
       )}
-    
+    </div>
     </div>
   )
 }
